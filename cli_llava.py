@@ -32,7 +32,8 @@ def main(
         temperature (float, optional): 生成文本的温度。默认值为 0.6。
         top_p (float, optional): 生成文本的top-p值。默认值为 0.9。
         max_seq_len (int, optional): 最大序列长度。默认值为 2048。
-        max_gpu_num_blocks: 用户自行设置的最大可用 blocks(tokens), 如果设置该值， kv cache 内存管理器的最大可用内存-tokens 由该值决定。
+        max_gpu_num_blocks: 用户自行设置的最大可用 blocks(tokens), 如果设置该值， 
+            kv cache 内存管理器的最大可用内存-tokens 由该值决定。
         max_gen_len (Optional[int], optional): 生成文本的最大长度。默认值为 512。
         load_model (bool, optional): 是否加载模型。默认值为True。
         compiled_model (bool, optional): 是否使用编译模型。默认值为True。

@@ -175,7 +175,8 @@ class LlamaRotaryEmbedding(nn.Module):
 
     def _dynamic_frequency_update(self, position_ids, device):
         """
-        用于动态更新频率参数 inv_freq, 支持序列长度超过缓存长度时的扩展或重置。dynamic RoPE layers should recompute `inv_freq` in the following situations:
+        用于动态更新频率参数 inv_freq, 支持序列长度超过缓存长度时的扩展或重置。
+        dynamic RoPE layers should recompute `inv_freq` in the following situations:
             1 - growing beyond the cached sequence length (allow scaling)
             2 - the current sequence length is in the original scale (avoid losing precision with small sequences)
         参数:
@@ -183,8 +184,9 @@ class LlamaRotaryEmbedding(nn.Module):
             device (`torch.device`): 当前设备。
         """
         seq_len = torch.max(position_ids) + 1
-        if seq_len > self.max_seq_len_cached:
-            # 如果序列长度增长且大于模型配置中的默认 max_seq_len_cached，则重新计算逆频率,并更新 max_seq_len_cached 为当前序列长度
+        if seq_len > self.max_seq_len_cached:  
+            # 如果序列长度增长且大于模型配置中的默认 max_seq_len_cached，
+            # 则重新计算逆频率, 并更新 max_seq_len_cached 为当前序列长度
             inv_freq, self.attention_scaling = self.rope_init_fn(
                 self.config, device, seq_len=seq_len, **self.rope_kwargs
             )
@@ -356,7 +358,8 @@ class Qwen2RotaryEmbedding(nn.Module):
             cos = emb.cos()
             sin = emb.sin()
 
-        # Advanced RoPE types (e.g. yarn) apply a post-processing scaling factor, equivalent to scaling attention
+        # Advanced RoPE types (e.g. yarn) apply a post-processing scaling factor, 
+        # equivalent to scaling attention
         cos = cos * self.attention_scaling
         sin = sin * self.attention_scaling
 
@@ -447,3 +450,5 @@ class TestLlamaRotaryEmbedding(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    
+

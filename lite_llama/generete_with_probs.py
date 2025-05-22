@@ -119,7 +119,7 @@ class GenerateText:
         )
         self.model_executor.atten_info.max_actual_seq_len = max_prompt_len
 
-        # 预分配tokens张量
+        # 预分配 tokens 张量
         tokens = torch.full((bsz, total_len), pad_id, dtype=torch.long, device=device)
 
         # 填充提示词到 tokens 张量
