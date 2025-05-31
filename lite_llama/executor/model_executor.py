@@ -129,17 +129,24 @@ class ModelExecutor:
             state_dict = None
 
         if load_model:
-            checkpoints = sorted(Path(checkpoints_dir).glob("*.pth"))
-            assert len(checkpoints) > 0, (
-                f"no checkpoint files found in {checkpoints_dir}"
-            )
-            ckpt_path = str(checkpoints[0])
-            log.debug("Type(ckpt_path) ", type(ckpt_path))
-            log.info(f'Loading checkpoint "{ckpt_path}"')
-            # 使用 torch.load 加载权重文件。torch.load 可以根据需要将权重加载到指定的设备上
-            state_dict = torch.load(
-                ckpt_path, mmap=True, weights_only=True, map_location=device
-            )
+            q_checkpoints = sorted(Path(checkpoints_dir).glob("*.gptq.pth"))
+            if q_checkpoints:
+                ckpt_path = str(q_checkpoints[0])
+                log.info(f'Loading GPTQ checkpoint "{ckpt_path}"')
+                from ..utils.gptq_quantization import load_quantized
+                state_dict = None
+                load_quantized(model, ckpt_path)
+            else:
+                checkpoints = sorted(Path(checkpoints_dir).glob("*.pth"))
+                assert len(checkpoints) > 0, (
+                    f"no checkpoint files found in {checkpoints_dir}"
+                )
+                ckpt_path = str(checkpoints[0])
+                log.debug("Type(ckpt_path) ", type(ckpt_path))
+                log.info(f'Loading checkpoint "{ckpt_path}"')
+                state_dict = torch.load(
+                    ckpt_path, mmap=True, weights_only=True, map_location=device
+                )
         else:
             conversion_func = get_conversion_func(model_config.model_type)
             if conversion_func is None:
@@ -150,9 +157,10 @@ class ModelExecutor:
                 f"Weight conversion completed. Time elapsed: {time.time() - start_time:.2f} sec"
             )
 
-        model.load_state_dict(
-            state_dict, strict=True, assign=True
-        )  # 将加载的 state_dict 应用到模型实例中。
+        if state_dict is not None:
+            model.load_state_dict(
+                state_dict, strict=True, assign=True
+            )  # 将加载的 state_dict 应用到模型实例中。
         model.eval()
         log.info(f"Loaded state dict in {time.time() - start_time:.2f}s")
 

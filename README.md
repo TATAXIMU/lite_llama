@@ -73,6 +73,7 @@ git clone https://github.com/harleyszhang/lite_llama.git
 cd lite_llama/
 pip install -r requirement.txt
 python test_weight_convert.py # model weight transformation
+python compress_gptq.py /path/to/model -o /path/to/model/quantized.gptq.pth
 python generate.py --prompt "What is large language model" --checkpoint_path /path/to/model/Llama-3.2-1B-Instruct/ # Run on the basis that the model has been downloaded and placed in the specified directory
 ```
 
@@ -131,6 +132,7 @@ Transformers per token latency: 5.436221 ms/token
 - [x] Operator fusion: the skip operation on residual joins is fused with the `rmsnorm` operator to form a new `skip_rmsnorm` operator.
 - [x] Refactoring and optimizing the `MHA` module to optimize the `context_attention` and `token_attention` kernels to support `Nopad attention` and `kv cache` dynamic allocation and management.
 - [ ] Supports continuous batch optimization.
+- [x] GPTQ style weight compression and loading.
 - [ ] Support for AWQ and SmoothQuant quantization.
 - [ ] Code refactoring and fix for cuda graph not working properly after optimization with AutoTokenAttention.
 
